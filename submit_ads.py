@@ -7,7 +7,7 @@ add_pure_metals, alloy = True, False
 env = "grand"  # "ito" or "grand"
 
 #adsorbates = ["CO", "CH3", "NO", "N2", "H2"]
-adsorbates = ["CO", "CH3"]
+adsorbates = ["CO"]
 
 adsorbates = "-".join(adsorbates)
 

@@ -1,4 +1,8 @@
 xc: "pbe"
+nelm: 30
+ibrion: 2
+potim: 0.1
+nsw: 5
 kpts:
     - 1
     - 1

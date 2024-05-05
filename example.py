@@ -39,7 +39,7 @@ for idos in doscars:
 
 #adsorbates = ["CO", "CH3", "NO", "N2", "H2"]
 #adsorbates = ["CO", "CH3", "NO", "NH3"]
-adsorbates = ["CO", "CH3", "NO"]
+adsorbates = ["CO"]
 
 # get descriptor for adsorbates
 print("getting descriptors", flush=True)
@@ -58,6 +58,7 @@ for adsorbate in adsorbates:
 
     descriptor = dos.get_descriptors(adsorbate=True, with_centers=with_centers)
     data.update(descriptor)
+    
     db_ads.insert(data)
 
 for idoscar in surface_doscars:

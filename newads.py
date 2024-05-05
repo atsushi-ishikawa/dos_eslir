@@ -7,10 +7,13 @@ bulk = read("test.cif")
 with open("vasp_setting.yaml", "r") as f:
     vasp_setting = yaml.safe_load(f)
 
-print(vasp_setting)
-quit()
-
 bulk.calc = Vasp(xc=vasp_setting["xc"],
+                 ibrion=vasp_setting["ibrion"],
+                 potim=vasp_setting["potim"],
+                 pp="pbe",
+                 lorbit=10,
+                 nsw=vasp_setting["nsw"],
+                 nelm=vasp_setting["nelm"],
                  kpts=vasp_setting["kpts"])
 
 energy = bulk.get_potential_energy()
