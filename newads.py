@@ -5,13 +5,42 @@ from ase.visualize import view
 from ase.build import surface, add_adsorbate
 import yaml
 import numpy as np
+import random
 
 vacuum = 6.0
 bulk = read("test.cif")
+
 surf = surface(lattice=bulk, indices=[1, 0, 0], layers=2,
                vacuum=vacuum, periodic=True)
 surf = surf*[2, 2, 1]
 surf.translate([0, 0, -vacuum+0.1])
+
+seed = 100
+random.seed(seed)
+np.random.seed(seed)
+
+from_element = ["Ba"]
+to_element = ["Ca"]
+
+max_replace = 8
+if max_replace != 0:
+    num_replace = random.choice(range(0, max_replace + 1))
+else:
+    num_replace = 0
+
+from_list = []
+for iatom in surf:
+    if iatom.symbol in from_element:
+        from_list.append(iatom.index)
+
+from_list = random.sample(from_list, num_replace)
+print(from_list)
+
+for iatom in from_list:
+    surf[iatom].symbol = random.choice(to_element)
+
+print(surf.get_chemical_formula())
+quit()
 
 adsorbate = Atoms("N")
 adsorbate.pbc = True
