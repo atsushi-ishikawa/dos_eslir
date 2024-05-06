@@ -6,6 +6,7 @@ from ase.build import surface, add_adsorbate
 import yaml
 import numpy as np
 import random
+import uuid
 
 vacuum = 6.0
 bulk = read("test.cif")
@@ -34,13 +35,9 @@ for iatom in surf:
         from_list.append(iatom.index)
 
 from_list = random.sample(from_list, num_replace)
-print(from_list)
 
 for iatom in from_list:
     surf[iatom].symbol = random.choice(to_element)
-
-print(surf.get_chemical_formula())
-quit()
 
 adsorbate = Atoms("N")
 adsorbate.pbc = True
@@ -56,6 +53,7 @@ with open("vasp_setting.yaml", "r") as f:
 
 num_elec_tot = np.zeros(4)  # s, p, d, f, valence only
 num_elec = {"O":  [2, 4, 0, 0],
+            "Ca": [2, 0, 0, 0],
             "Ba": [2, 0, 0, 0],
             "Zr": [2, 0, 2, 0]}
 
@@ -67,6 +65,7 @@ vasp_calc = Vasp(xc=vasp_setting["xc"],
                  potim=vasp_setting["potim"],
                  pp="pbe",
                  lorbit=10,
+                 lwave=False,
                  nsw=vasp_setting["nsw"],
                  nelm=vasp_setting["nelm"],
                  kpts=vasp_setting["kpts"])
@@ -80,4 +79,11 @@ surf_energy = surf.get_potential_energy()
 surf_ads_energy = surf_ads.get_potential_energy()
 adsorption_energy = surf_ads_energy - (ads_energy + surf_energy)
 
-print(adsorption_energy)
+with open("result.yaml", "a") as f:
+    id = {"id": str(uuid.uuid4())}
+    yaml.dump(id, f, default_flow_style=False, allow_unicode=True)
+
+    result = {"formula": surf.get_chemical_formula(),
+              "adsorption_energy": adsorption_energy}
+    yaml.dump(result, f, default_flow_style=False, allow_unicode=True)
+
