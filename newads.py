@@ -7,21 +7,25 @@ import yaml
 import numpy as np
 import random
 import uuid
+from vasptools import sort_atoms_by_z
 
 vacuum = 6.0
 bulk = read("test.cif")
 
-surf = surface(lattice=bulk, indices=[1, 0, 0], layers=2,
+surf = surface(lattice=bulk, indices=[1, 1, 0], layers=2,
                vacuum=vacuum, periodic=True)
 surf = surf*[2, 2, 1]
 surf.translate([0, 0, -vacuum+0.1])
+surf = sort_atoms_by_z(surf)
+surf.wrap()
+surf = surf[:-4]  # remove O atoms of the rutile structure
 
 seed = 100
 random.seed(seed)
 np.random.seed(seed)
 
-from_element = ["Ba"]
-to_element = ["Ca"]
+from_element = ["Ti"]
+to_element = ["Zr"]
 
 max_replace = 8
 if max_replace != 0:
@@ -45,8 +49,8 @@ adsorbate.cell = [10.0, 10.0, 10.0]
 adsorbate.center()
 
 surf_ads = surf.copy()
-add_adsorbate(slab=surf_ads, adsorbate=adsorbate, height=2.0,
-              position=[0, 0], offset=[0.25, 0.25])
+add_adsorbate(slab=surf_ads, adsorbate=adsorbate, height=1.4,
+              position=[0, 0], offset=[0.25, 0.50])
 
 with open("vasp_setting.yaml", "r") as f:
     vasp_setting = yaml.safe_load(f)
@@ -54,6 +58,7 @@ with open("vasp_setting.yaml", "r") as f:
 num_elec_tot = np.zeros(4)  # s, p, d, f, valence only
 num_elec = {"O":  [2, 4, 0, 0],
             "Ca": [2, 0, 0, 0],
+            "Ti": [2, 0, 2, 0],
             "Ba": [2, 0, 0, 0],
             "Zr": [2, 0, 2, 0]}
 
