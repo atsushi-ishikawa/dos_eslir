@@ -10,7 +10,7 @@ import uuid
 from vasptools import sort_atoms_by_z
 
 vacuum = 6.0
-bulk = read("test.cif")
+bulk = read("rutile.cif")
 
 surf = surface(lattice=bulk, indices=[1, 1, 0], layers=2,
                vacuum=vacuum, periodic=True)
