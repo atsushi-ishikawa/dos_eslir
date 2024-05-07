@@ -6,8 +6,10 @@ from ase.build import surface, add_adsorbate
 import yaml
 import numpy as np
 import random
+from datetime import datetime
 import uuid
 from vasptools import sort_atoms_by_z
+import random
 
 vacuum = 6.0
 bulk = read("rutile.cif")
@@ -20,12 +22,12 @@ surf = sort_atoms_by_z(surf)
 surf.wrap()
 surf = surf[:-4]  # remove O atoms of the rutile structure
 
-seed = 100
+# seed = 100
+seed = datetime.now().timestamp()
 random.seed(seed)
-np.random.seed(seed)
 
 from_element = ["Ti"]
-to_element = ["Zr"]
+to_element = ["V", "Cr"]
 
 max_replace = 8
 if max_replace != 0:
@@ -59,6 +61,8 @@ num_elec_tot = np.zeros(4)  # s, p, d, f, valence only
 num_elec = {"O":  [2, 4, 0, 0],
             "Ca": [2, 0, 0, 0],
             "Ti": [2, 0, 2, 0],
+            "V" : [2, 0, 3, 0],
+            "Cr": [1, 0, 5, 0],
             "Ba": [2, 0, 0, 0],
             "Zr": [2, 0, 2, 0]}
 
@@ -89,6 +93,7 @@ with open("result.yaml", "a") as f:
     yaml.dump(id, f, default_flow_style=False, allow_unicode=True)
 
     result = {"formula": surf.get_chemical_formula(),
+              "number_of_valence_electrons": num_elec_tot.tolist(),
               "adsorption_energy": adsorption_energy}
     yaml.dump(result, f, default_flow_style=False, allow_unicode=True)
 
